@@ -1,20 +1,37 @@
-# ConveyorVision-Bag-Counter (third-party reference)
+# ConveyorVision-Bag-Counter
 
-This folder contains a source-code reference snapshot based on **ConveyorVision-Bag-Counter** by Jagennath Hari, included under the original BSD 3-Clause license.
+## 📄 Abstract
+<div align="justify">
+ConveyorVision is an innovative real-time system designed to automate the counting and tracking of cement bags on conveyor belts. Utilizing cutting-edge deep learning techniques like YOLOv8 for object detection and Byte tracker for precise tracking, ConveyorVision accurately monitors cement bags as they traverse the conveyor belt. Its seamless integration, reliable counting at the referee line, and robust performance in complex environments make it a valuable tool for optimizing industrial processes and enhancing productivity.
+</div>
 
-- Original project: https://github.com/jagennath-hari/ConveyorVision-Bag-Counter
-- Original copyright: Jagennath Hari (2023)
-- License: [LICENSE](LICENSE)
-- Citation metadata: [CITATION.cff](CITATION.cff)
+## 🏁 Dependencies
+1) NVIDIA Driver ([Official Download Link](https://www.nvidia.com/download/index.aspx))
+2) CUDA Toolkit ([Official Link](https://developer.nvidia.com/cuda-downloads))
+3) Miniconda ([Official Link](https://docs.conda.io/en/main/miniconda.html))
+4) PyTorch ([Official Link](https://pytorch.org/))
+5) Ultralytics YOLOv8 ([Official Link](https://github.com/ultralytics/ultralytics))
+6) ByteTracker ([Official Link](https://github.com/ifzhang/ByteTrack))
+7) Supervision ([Official Link](https://github.com/roboflow/supervision))
+8) Onemetric ([Official Link](https://github.com/SkalskiP/onemetric))
 
-## Contents
-- `scripts/`: video inference, frame extraction, dataset splitting, and training examples.
-- The original project includes a sample GIF and PDF report. They are linked below from the original repository; they have not been copied into this upload.
+## ⚙️ Install
+1) Create conda env.
+2) Install dependencies into env.
+3) Annotate your datasets of cement bags. A good online data annotation tool is [Roboflow](https://roboflow.com) or [VGG Image Annotator](https://www.robots.ox.ac.uk/~vgg/software/via/). A `data.yaml` file must get created along with `train`, `valid` and  `test` folders containing the images and labels.
+4) Follow [Official Link](https://docs.ultralytics.com) to train network and generate `yolo8.pt` file with your network architecture of choice, along with your dataset.
 
-### Sample demonstration
-![Original ConveyorVision sample](https://raw.githubusercontent.com/jagennath-hari/ConveyorVision-Bag-Counter/main/assets/conveyorvision_output.gif)
+## 🤖 To Use
+1) Update the `video file` and `.pt` file paths in `counter.py` in the `main()` function.
+2) Run `python counter.py` inside your conda env.
 
-[View original PDF report](https://github.com/jagennath-hari/ConveyorVision-Bag-Counter/blob/main/assets/ConveyorVision.pdf)
+## 📊 Result
+<div align="center">
+    <img src="assets/conveyorvision_output.gif" width="800"/>
+</div>
 
-## Notes
-This is third-party reference code, not a verified implementation of the main project. The scripts require dependencies such as OpenCV, Ultralytics, PyTorch, ByteTrack, Supervision, and Onemetric. Machine-specific file paths must be configured before running. Compatibility and results have not been independently verified. Do not upload confidential footage, datasets, or model weights without permission.
+## 📑 Report
+A brief [REPORT](assets/ConveyorVision.pdf) can be read to better understand the algorithm.
+
+## 🪪 License 
+See the [LICENSE](LICENSE) file for details.
