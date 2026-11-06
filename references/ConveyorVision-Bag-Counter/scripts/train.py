@@ -1,8 +1,17 @@
 from ultralytics import YOLO
 
-def train_model(data_yaml, epochs=1000, image_size=640):
-    model = YOLO("yolov8n.pt")
-    model.train(data=str(data_yaml), epochs=epochs, imgsz=image_size)
+class modelTraining:
+    def __init__(self):
+        self.model = YOLO('yolov8n.yaml')
+        self.model = YOLO('yolov8n.pt')  # load a pretrained model (recommended for training)
+        self.model = YOLO('yolov8n.yaml').load('yolov8n.pt')
+
+    def train(self):
+        self.model.train(data='/home/hari/cement/data.yaml', epochs=1000, imgsz=640)
+
+def main():
+    trainer = modelTraining()
+    trainer.train()
 
 if __name__ == "__main__":
-    train_model("path/to/data.yaml")
+    main()
