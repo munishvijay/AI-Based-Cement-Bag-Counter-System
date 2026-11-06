@@ -1,109 +1,153 @@
 # AI-Based Cement Bag Counter System
 
-An independent computer-vision learning project focused on exploring automated cement bag detection, tracking, and counting on conveyor belts.
+An independent Python computer-vision project that detects and tracks cement bags on conveyor footage and counts tracked objects when they cross a configurable virtual line.
 
-The proposed system aims to process conveyor-belt video or camera footage, identify cement bags, track individual bags across video frames, and increment the count when a tracked bag crosses a configured virtual counting line. The project is intended to explore how AI-based vision techniques can support industrial material handling and dispatch monitoring.
+## Features
 
-> **Project status:** Initial setup / development in progress. This repository currently contains project documentation and the planned implementation approach. A runnable application, trained model, and validated counting results have not yet been added.
+- Video-file and webcam/camera input.
+- YOLO-based cement-bag detection.
+- Multi-object tracking with Ultralytics and ByteTrack.
+- Virtual line-crossing count with one count per tracker ID.
+- Annotated preview and optional MP4 output.
+- Optional CSV event log.
+- YOLO training helper and unit tests for counting logic.
+- GitHub Actions workflow for automated unit tests.
 
-## Abstract
+## Model and dataset requirement
 
-Manual counting of cement bags on conveyor belts can be time-consuming and may lead to counting errors, especially in high-throughput environments. This project explores a computer-vision approach to automate the process.
+**This repository contains the application and training helper, not trained cement-bag weights or a labelled dataset.** A generic COCO-pretrained model does not provide a dedicated cement-bag class. Train a detector on a dataset you own or are licensed to use, then supply its resulting `.pt` file. No model accuracy, speed, or production-readiness result is claimed.
 
-The planned solution combines object detection, multi-object tracking, and line-crossing logic to identify cement bags and count each tracked bag once. The longer-term goal is to provide a clear, repeatable counting workflow that can be evaluated using representative conveyor footage.
+## Project structure
 
-## Key Features (Planned)
+```text
+app.py
+train.py
+requirements.txt
+tests/test_counter.py
+.github/workflows/tests.yml
+.gitignore
+LICENSE
+README.md
+```
 
-- Detect cement bags in recorded video or a live camera stream.
-- Track detected bags across consecutive frames.
-- Count each tracked bag once when it crosses a virtual reference line.
-- Display or log counting information for review.
-- Evaluate the approach under different conveyor speeds, lighting conditions, and bag arrangements.
+## Requirements and installation
 
-These are proposed capabilities and should not be considered implemented until the corresponding code is available in this repository.
+- Python 3.10+
+- A trained Ultralytics YOLO detection model (`.pt`)
+- A video file or webcam; GPU is optional but may improve inference speed
 
-## Proposed Workflow
+```bash
+git clone https://github.com/munishvijay/AI-Based-Cement-Bag-Counter-System.git
+cd AI-Based-Cement-Bag-Counter-System
+python -m venv .venv
+```
 
-1. **Video input:** Read footage from a video file or supported camera.
-2. **Object detection:** Identify cement bags in each frame using a YOLO-family model.
-3. **Object tracking:** Maintain object identities across frames using a tracker such as ByteTrack.
-4. **Line-crossing logic:** Detect when a tracked bag crosses the configured counting line.
-5. **Count management:** Prevent duplicate counts for the same tracked object.
-6. **Output:** Present the count and, where implemented, save results for later review.
+Activate the environment:
 
-## Planned Technology Stack
+**Windows PowerShell**
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-| Technology | Intended purpose | Status |
-|---|---|---|
-| Python | Main programming language | Planned |
-| OpenCV | Video input and image processing | Planned |
-| Ultralytics YOLO | Cement bag object detection | Planned |
-| ByteTrack / Supervision | Multi-object tracking | Planned |
-| PyTorch | Model runtime and training support | Planned |
+**Linux/macOS**
+```bash
+source .venv/bin/activate
+```
 
-The final versions and dependencies will be documented after implementation and testing.
+Install packages:
 
-## Requirements
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-The following tools are expected to be considered during development:
+## Dataset format
 
-- Python 3
-- OpenCV
-- Ultralytics YOLO
-- PyTorch
-- ByteTrack or a compatible tracking integration
+Prepare a YOLO object-detection dataset with images and matching label files:
 
-GPU acceleration and CUDA may be useful depending on the selected model and hardware, but the final requirements have not yet been established.
+```text
+cement-bag-dataset/
+├── images/
+│   ├── train/
+│   └── val/
+└── labels/
+    ├── train/
+    └── val/
+```
 
-## Installation
+Each label row must use `class_id x_center y_center width height` with normalized coordinates. Create a dataset YAML, for example `data/cement_bags.yaml`:
 
-The project is currently in its documentation and initial setup stage. There is no runnable application or dependency file available yet, so installation and execution commands are not provided at this stage.
+```yaml
+path: /absolute/path/to/cement-bag-dataset
+train: images/train
+val: images/val
+names:
+  0: cement_bag
+```
 
-Setup instructions will be added after the source code and tested dependencies are committed.
+Only use footage and images you own or have permission to use. Avoid committing confidential plant video or large datasets.
 
-## Usage
+## Train the detector
 
-Usage instructions will be added when the first working implementation is available. The intended workflow is to configure a video source and model, run detection and tracking, and review the bag count generated by the line-crossing logic.
+```bash
+python train.py --data data/cement_bags.yaml --model yolo11n.pt --epochs 100 --image-size 640 --batch 8
+```
 
-## Results and Evaluation
+The training framework normally saves the best weights at `runs/cement_bag/detector/weights/best.pt`. Use the actual path printed by the training run. Model weights are excluded from Git by `.gitignore`.
 
-No verified performance results are available yet. Once an implementation and suitable test footage are available, evaluation may include:
+## Run the counter
 
-- Counting accuracy against manually verified counts.
-- Duplicate-count and missed-detection rates.
-- Performance under different lighting and conveyor conditions.
-- Processing speed on the target hardware.
+Video file:
 
-No accuracy, speed, or production-readiness claims are made at this stage.
+```bash
+python app.py --source videos/conveyor.mp4 --model runs/cement_bag/detector/weights/best.pt --class-id 0 --display
+```
 
-## Development Roadmap
+Webcam:
 
-- [ ] Establish the source-code structure and configuration.
-- [ ] Add sample video input support.
-- [ ] Prepare or identify a properly licensed cement-bag dataset.
-- [ ] Implement and evaluate object detection.
-- [ ] Integrate multi-object tracking.
-- [ ] Implement virtual line-crossing and duplicate-count prevention.
-- [ ] Add count display and result logging.
-- [ ] Add tests and document installation and usage.
-- [ ] Evaluate performance using representative conveyor footage.
+```bash
+python app.py --source 0 --model runs/cement_bag/detector/weights/best.pt --class-id 0 --display
+```
 
-## Dataset and Model Notes
+Save an annotated MP4 and CSV count-event log:
 
-A suitable dataset is required to train or evaluate the detection model. Only datasets and footage that are owned by the project author or used with appropriate permission and licensing should be included.
+```bash
+python app.py --source videos/conveyor.mp4 --model runs/cement_bag/detector/weights/best.pt --class-id 0 --output output/annotated.mp4 --csv output/count_events.csv
+```
 
-Do not upload confidential industrial footage, personal information, or model weights and datasets unless their distribution is permitted. Large model files may be better managed outside Git.
+Press `q` in the preview window to stop.
 
-## Reference and Attribution
+### Command options
 
-This is an independent learning project. The public repository [ConveyorVision-Bag-Counter](https://github.com/jagennath-hari/ConveyorVision-Bag-Counter) was consulted as a reference for the general problem of conveyor-belt cement bag detection and tracking.
+| Option | Default | Purpose |
+|---|---:|---|
+| `--source` | Required | Video path or camera index such as `0` |
+| `--model` | Required | Trained YOLO `.pt` weights |
+| `--class-id` | `0` | Cement-bag class index |
+| `--line-y` | `0.5` | Horizontal line position, normalized 0.0-1.0 |
+| `--confidence` | `0.35` | Detection confidence threshold |
+| `--image-size` | `640` | YOLO inference size |
+| `--tracker` | `bytetrack.yaml` | Ultralytics tracker configuration |
+| `--output` | Optional | Annotated MP4 destination |
+| `--csv` | Optional | CSV count-event destination |
+| `--display` | Off | Show preview window |
 
-This project does not claim ownership of that repository's source code, datasets, trained weights, or other materials. Any future incorporation or adaptation of third-party code or assets must comply with the applicable license and retain the required notices. The reference repository identifies its license as BSD 3-Clause.
+The counter counts each tracker ID once per run. If tracking loses an object and assigns it a new ID, the same physical bag may be counted again. Tune and validate the system using representative camera footage.
 
-## Disclaimer
+## Unit tests
 
-This project is experimental and intended for learning and evaluation. It is not a certified industrial safety, quality-control, or production counting system. Any operational use would require testing and validation under the actual site conditions.
+The counting logic can be tested without a model file or video:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+GitHub Actions is configured to run these tests on pushes and pull requests to `main`. A passing workflow result must be confirmed in the Actions tab; no successful run is claimed here.
+
+## Limitations and intended use
+
+Detection quality depends on the training data, camera position, lighting, bag overlap, conveyor speed, and tracker behaviour. Validate results against manually checked footage before operational use. This is an experimental learning project, not a certified industrial safety, dispatch, billing, or quality-control system.
 
 ## License
 
-This repository is licensed under the **BSD 3-Clause License**. See the [LICENSE](LICENSE) file for details.
+Licensed under the BSD 3-Clause License. See [LICENSE](LICENSE).
