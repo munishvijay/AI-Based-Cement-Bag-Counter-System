@@ -13,17 +13,6 @@ An independent Python computer-vision project that detects and tracks cement bag
 - YOLO training helper and unit tests for counting logic.
 - GitHub Actions workflow for automated unit tests.
 
-## Project Preview
-
-**Project:** AI-Based Cement Bag Counter System  
-**Project owner / developer:** Munish Vijay
-
-The animation below is included as a visual reference for the type of conveyor-belt bag detection and counting this project aims to implement. It is **not produced by this repository**, and it does not verify the accuracy of this project's code or model.
-
-![Conveyor-belt bag counting visual reference](https://raw.githubusercontent.com/jagennath-hari/ConveyorVision-Bag-Counter/main/assets/conveyorvision_output.gif)
-
-<sub>GIF source: ConveyorVision-Bag-Counter by Jagennath Hari. Used as a third-party visual reference; source project: [GitHub](https://github.com/jagennath-hari/ConveyorVision-Bag-Counter) · [BSD 3-Clause license](https://github.com/jagennath-hari/ConveyorVision-Bag-Counter/blob/main/LICENSE).</sub>
-
 ## Model and dataset requirement
 
 **This repository contains the application and training helper, not trained cement-bag weights or a labelled dataset.** A generic COCO-pretrained model does not provide a dedicated cement-bag class. Train a detector on a dataset you own or are licensed to use, then supply its resulting `.pt` file. No model accuracy, speed, or production-readiness result is claimed.
