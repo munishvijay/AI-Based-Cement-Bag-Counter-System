@@ -151,3 +151,9 @@ Detection quality depends on the training data, camera position, lighting, bag o
 ## License
 
 Licensed under the BSD 3-Clause License. See [LICENSE](LICENSE).
+
+## Project Ownership
+
+**Project owner / developer:** Munish Vijay
+
+This repository is maintained as an independent project by Munish Vijay. Third-party libraries and dependencies remain subject to their respective licenses.
